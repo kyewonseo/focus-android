@@ -24,12 +24,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mozilla.focus.R;
+import org.mozilla.focus.helpers.TestHelper;
 
 import java.io.IOException;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.mozilla.focus.helpers.TestHelper;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -44,6 +44,7 @@ import static android.support.test.espresso.web.webdriver.DriverAtoms.findElemen
 import static android.support.test.espresso.web.webdriver.DriverAtoms.getText;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mozilla.focus.fragment.FirstrunFragment.FIRSTRUN_PREF;
+
 
 @RunWith(AndroidJUnit4.class)
 public class CustomTabTest {
@@ -60,7 +61,9 @@ public class CustomTabTest {
 
     @After
     public void tearDown() throws Exception {
-        activityTestRule.getActivity().finishAndRemoveTask();
+        if (!TestHelper.getAppName().contains("gecko")) {
+            activityTestRule.getActivity().finishAndRemoveTask();
+        }
     }
 
     @Test

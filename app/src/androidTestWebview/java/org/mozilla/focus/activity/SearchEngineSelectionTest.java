@@ -17,6 +17,7 @@ import android.support.test.uiautomator.UiSelector;
 import android.widget.RadioButton;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,9 +26,10 @@ import org.mozilla.focus.helpers.TestHelper;
 import static android.support.test.espresso.action.ViewActions.click;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-import static org.mozilla.focus.helpers.TestHelper.waitingTime;
-import static org.mozilla.focus.helpers.EspressoHelper.openSettings;
 import static org.mozilla.focus.fragment.FirstrunFragment.FIRSTRUN_PREF;
+import static org.mozilla.focus.helpers.EspressoHelper.openSettings;
+import static org.mozilla.focus.helpers.TestHelper.waitingTime;
+import static org.mozilla.focus.helpers.TestHelper.webPageLoadwaitingTime;
 
 // This test checks the search engine can be changed
 @RunWith(AndroidJUnit4.class)
@@ -67,11 +69,11 @@ public class SearchEngineSelectionTest {
                 .enabled(true));
 
         UiObject googleWebView = TestHelper.mDevice.findObject(new UiSelector()
-                .description("mozilla focus - Google Search")
-                .className("android.webkit.WebView"));
+                                .description("mozilla focus - Google Search")
+                                .className("android.webkit.WebView"));
         UiObject yahooWebView = TestHelper.mDevice.findObject(new UiSelector()
-                .description("mozilla focus - - Yahoo Search Results")
-                .className("android.webkit.WebView"));
+                                .description("mozilla focus - - Yahoo Search Results")
+                                .className("android.webkit.WebView"));
 
         /* Go to Settings and select the Search Engine */
         assertTrue(TestHelper.inlineAutocompleteEditText.waitForExists(waitingTime));
@@ -83,7 +85,7 @@ public class SearchEngineSelectionTest {
 
         /* Get the dynamically generated search engine list from this settings page */
         UiScrollable SearchEngineList = new UiScrollable(new UiSelector()
-                .resourceId("org.mozilla.focus.debug:id/search_engine_group").enabled(true));
+                .resourceId(TestHelper.getAppName() + ":id/search_engine_group").enabled(true));
 
         UiObject GoogleSelection = SearchEngineList.getChildByText(new UiSelector()
                 .className(RadioButton.class), "Google");
@@ -115,7 +117,11 @@ public class SearchEngineSelectionTest {
         TestHelper.hint.click();
 
         /* Browser shows google search webview*/
-        googleWebView.waitForExists(waitingTime);
+        if (TestHelper.getAppName().contains("webview")) {
+            googleWebView.waitForExists(waitingTime);
+        }
+        TestHelper.progressBar.waitForExists(webPageLoadwaitingTime);
+        Assert.assertTrue(TestHelper.progressBar.waitUntilGone(webPageLoadwaitingTime));
         assertTrue (TestHelper.browserURLbar.getText().contains("google"));
         assertTrue (TestHelper.browserURLbar.getText().contains("mozilla"));
         assertTrue (TestHelper.browserURLbar.getText().contains("focus"));
@@ -125,7 +131,11 @@ public class SearchEngineSelectionTest {
         TestHelper.inlineAutocompleteEditText.waitForExists(waitingTime);
         assertEquals(TestHelper.inlineAutocompleteEditText.getText(), "mozilla focus");
         TestHelper.pressEnterKey();
-        googleWebView.waitForExists(waitingTime);
+        if (TestHelper.getAppName().contains("webview")) {
+            googleWebView.waitForExists(waitingTime);
+        }
+        TestHelper.progressBar.waitForExists(webPageLoadwaitingTime);
+        Assert.assertTrue(TestHelper.progressBar.waitUntilGone(webPageLoadwaitingTime));
         assertTrue (TestHelper.browserURLbar.getText().contains("google"));
         assertTrue (TestHelper.browserURLbar.getText().contains("mozilla"));
         assertTrue (TestHelper.browserURLbar.getText().contains("focus"));
@@ -153,8 +163,12 @@ public class SearchEngineSelectionTest {
         assertTrue(TestHelper.hint.getText().equals("Search for mozilla focus"));
         TestHelper.hint.click();
 
-        /* Browser shows google search webview*/
-        yahooWebView.waitForExists(waitingTime);
+        /* Browser shows yahoo search webview */
+        if (TestHelper.getAppName().contains("webview")) {
+            yahooWebView.waitForExists(waitingTime);
+        }
+        TestHelper.progressBar.waitForExists(webPageLoadwaitingTime);
+        Assert.assertTrue(TestHelper.progressBar.waitUntilGone(webPageLoadwaitingTime));
         assertTrue (TestHelper.browserURLbar.getText().contains("yahoo"));
         assertTrue (TestHelper.browserURLbar.getText().contains("mozilla"));
         assertTrue (TestHelper.browserURLbar.getText().contains("focus"));
