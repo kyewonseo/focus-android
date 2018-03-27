@@ -6,6 +6,8 @@
 # This script installs google cloud sdk, logs into google firebase, executes tests,
 # and collects test artifacts into the test_artifacts folder
 
+# If a command fails then do not proceed and fail this script too.
+set -ex
 #########################
 # The command line help #
 #########################
